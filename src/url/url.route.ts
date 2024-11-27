@@ -4,7 +4,7 @@ import { findUrl } from "./url.service";
 
 export const urlRoute = express.Router();
 
-urlRoute.get('/urls/:urlId', async (req: Request, res: Response) => {
+urlRoute.get('/:urlId', async (req: Request, res: Response) => {
    const url = await findUrl(req.params.urlId);
 
     if(url){
