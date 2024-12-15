@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import { urlRoute } from './url/url.route';
+import { userRoute } from './user/user.route';
 import session from 'express-session';
 import { pool } from './db';
-import bcrypt from 'bcrypt';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -28,16 +28,19 @@ app.use(session({
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
 }));
 
-app.get('/login',(req, res) => {
-    (req.session as any).username = 'Grazi';
-    res.send();
-})
-
+app.use(userRoute);
 app.use(urlRoute);
 
 app.listen(PORT, () => {
     console.log('Server Ready');
 })
 
-const hashedString = bcrypt.hashSync('eat', 10);
-console.log(bcrypt.compareSync('eat', hashedString));
+
+export function authMiddleware(req: Request, res: Response, next: NextFunction){
+    const { user } = req.session;
+    if(!user){
+        res.status(401).send('User not authorized');
+    } else {
+        next();
+    }
+}
