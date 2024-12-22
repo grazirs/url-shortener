@@ -1,16 +1,13 @@
 import { Session, SessionData } from "express-session";
 import { User } from "../user/user.model";
-
-export {};
-
-declare module 'express-serve-static-core'{
-    interface Request {
-        session: Session & Partial<SessionData>
-    }
-}
+import { Request } from "express";
 
 declare module 'express-session' {
     interface SessionData {
         user: Omit<User, 'password'>;
     }
+}
+
+export interface AuthenticatedRequest extends Request {
+    session:  Session & SessionData
 }

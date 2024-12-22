@@ -1,4 +1,5 @@
 import { pool } from "../db";
+import { nanoid } from 'nanoid';
 
 export async function findUrl(urlId: string){
     try {
@@ -10,7 +11,9 @@ export async function findUrl(urlId: string){
     }
 }
 
-export async function createUrl(urlId: string, destination: string, userId: number ){
+export async function createUrl(destination: string, userId: number ){
+    const LENGTH = 7;
+    const urlId = nanoid(LENGTH);
     const text = 'INSERT INTO urls (id, destination, user_id) VALUES($1, $2, $3) RETURNING *';
     const values = [urlId, destination, userId];
 

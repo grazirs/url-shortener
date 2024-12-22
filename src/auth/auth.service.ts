@@ -15,9 +15,9 @@ export function encryptPassword(password: string){
     return bcrypt.hashSync(password, 10);
 }
 
-export async function createUser(email: string, password: string){
+export async function createUser(data: {email: string, password: string}){
     const text = 'INSERT INTO users(email, password) VALUES($1, $2) RETURNING *';
-    const values = [email, password];
+    const values = [data.email, data.password];
 
     try {
         const res = await pool.query(text, values);
