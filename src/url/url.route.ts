@@ -1,15 +1,8 @@
-import express, { Request, Response } from "express";
-import { findUrl } from "./url.service";
-
+import express from "express";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { urlId, urls } from "./url.controller";
 
 export const urlRoute = express.Router();
 
-urlRoute.get('/:urlId', async (req: Request, res: Response) => {
-   const url = await findUrl(req.params.urlId);
-
-    if(url){
-        res.redirect(url.destination);
-    }  else {
-        res.status(404).send(`${req.params.urlId} does not exist`);
-    }
-});
+urlRoute.get('/:urlId', urlId);
+urlRoute.post('/urls', [authMiddleware], urls)
