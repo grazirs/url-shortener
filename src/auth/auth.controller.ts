@@ -1,19 +1,12 @@
 import { Request, Response } from "express";
 import { createUser, encryptPassword, findUserByEmail } from "./auth.service";
 import bcrypt from 'bcrypt';
+import { authSchema } from "./auth.dto";
+import { validateBody } from "../middleware/validator.middleware";
 
 export async function signUp(req: Request, res: Response) {
     const { email, password } = req.body;
-
-    if (!email || typeof email !== 'string' || email.length < 3 || email.length > 50) {
-        res.status(422).send("Invalid email format");
-        return;
-    }
-
-    if (!password || typeof password !== 'string' || password.length < 3 || password.length > 50) {
-        res.status(422).send("Invalid password format");
-        return;
-    }
+    validateBody(authSchema);
 
     const searchUser = await findUserByEmail(email);
 
@@ -31,16 +24,7 @@ export async function signUp(req: Request, res: Response) {
 
 export async function login(req: Request, res: Response) {
     const { email, password } = req.body;
-
-    if (!email || typeof email !== 'string' || email.length < 3 || email.length > 50) {
-        res.status(422).send("Invalid email format");
-        return;
-    }
-
-    if (!password || typeof password !== 'string' || password.length < 3 || password.length > 50) {
-        res.status(422).send("Invalid password format");
-        return;
-    }
+    validateBody(authSchema);
 
     const user = await findUserByEmail(email);
 
