@@ -3,7 +3,7 @@ dotenv.config();
 import express from 'express';
 import helmet from 'helmet';
 import { urlRoute } from './url/url.route';
-import { authRoute, } from './auth/auth.route';
+import { authRoute } from './auth/auth.route';
 import { sessionConfig } from './middleware/session.middleware';
 import { userRoute } from './user/user.route';
 
@@ -15,8 +15,9 @@ app.use(helmet());
 app.use(express.json());
 app.use(sessionConfig);
 app.use(authRoute);
-app.use(urlRoute);
 app.use(userRoute);
+app.use(urlRoute);
+
 
 app.listen(PORT, () => {
     console.log('Server Ready');

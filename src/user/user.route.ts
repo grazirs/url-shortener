@@ -7,4 +7,4 @@ import { userSchema } from "./user.dto";
 export const userRoute = express.Router();
 
 userRoute.get('/me', [authMiddleware], getMe);
-userRoute.patch('/me', [authMiddleware], [validateBody(userSchema)], patchMe);
+userRoute.patch('/me', [authMiddleware, validateBody(userSchema)], patchMe);

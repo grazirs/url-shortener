@@ -26,3 +26,22 @@ export async function createUrl(destination: string, userId: number ){
     }
 }
 
+export async function findUrlsFromUser(userId: number) {
+    try {
+        const res = await pool.query('SELECT * FROM urls WHERE user_id = $1', [userId]);
+        return res.rows;
+    } catch (err) {
+        console.error('Something went wrong:', err);
+        throw err; 
+    }
+}
+
+export async function removeUrl(urlId: string){
+    try{
+        const res = await pool.query('DELETE FROM urls WHERE id = $1', [urlId]);
+        return res.rows;
+    } catch(error){
+        console.error('Something went wrong:', error);
+        throw error; 
+    }
+}
