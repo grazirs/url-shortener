@@ -11,3 +11,17 @@ export async function updateUser(data: {name: string, email: string, id: number}
         throw error;
     }
 }
+
+export async function getUser(userId: number){
+    const text = 'SELECT * from users WHERE id = $1';
+    const values = [userId];
+
+    try{
+        const res = await pool.query(text, values);
+        console.log(res.rows[0]);
+        return res.rows[0];
+    }catch(error){
+        console.error('Something went wrong', error);
+        throw error;
+    }
+}

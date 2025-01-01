@@ -2,11 +2,18 @@ import { Request, Response } from "express";
 import { validateBody } from "../middleware/validator.middleware";
 import { userSchema } from "./user.dto";
 import { AuthenticatedRequest } from "../types";
-import { updateUser } from "./user.service";
+import { getUser, updateUser } from "./user.service";
 
 export async function getMe(req: Request, res: Response){
-    const { password, ...result } = req.body;
-    res.json(result);
+    const authRequest = req as AuthenticatedRequest;
+    const userId = authRequest.session.user.id;
+    const result = await getUser(userId);
+    if(result){
+        const { password, ...rest} = result;
+        res.json(rest);
+    } else {
+        res.status(404).send(`User ${userId} not found`);
+    }
 }
 
 export async function patchMe(req: Request, res: Response){
