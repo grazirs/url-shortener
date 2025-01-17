@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { createUrl, findUrl, findUrlsFromUser, removeUrl } from "./url.service";
 import { AuthenticatedRequest } from "../types";
-import { validateBody } from "../middleware/validator.middleware";
 
 export async function urlId(req: Request, res: Response){
     const url = await findUrl(req.params.urlId);
@@ -14,7 +13,6 @@ export async function urlId(req: Request, res: Response){
 
 export async function urls(req: Request, res: Response){
     const { destination } = req.body;
-    validateBody(destination);
     const authRequest = req as AuthenticatedRequest;
     const userId = authRequest.session.user.id;
 

@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
 import { createUser, encryptPassword, findUserByEmail } from "./auth.service";
 import bcrypt from 'bcrypt';
-import { authSchema } from "./auth.dto";
-import { validateBody } from "../middleware/validator.middleware";
 
 export async function signUp(req: Request, res: Response) {
     const { email, password } = req.body;
-    validateBody(authSchema);
 
     const searchUser = await findUserByEmail(email);
 
@@ -24,7 +21,6 @@ export async function signUp(req: Request, res: Response) {
 
 export async function login(req: Request, res: Response) {
     const { email, password } = req.body;
-    validateBody(authSchema);
 
     const user = await findUserByEmail(email);
 
