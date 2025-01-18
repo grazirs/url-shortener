@@ -17,9 +17,9 @@ export async function getMe(req: Request, res: Response){
 export async function patchMe(req: Request, res: Response){
     const authRequest = req as AuthenticatedRequest;
     const id = authRequest.session.user.id;
-    const { name, email } = req.body;
+    const { email } = req.body;
 
-    const userUpdated = await updateUser({name: name, email: email, id: id});
+    const userUpdated = await updateUser({email: email, id: id});
  
     if(userUpdated) {
         const { password, id, ...rest} = userUpdated;
