@@ -6,7 +6,6 @@ import { urlSchema } from "./url.dto";
 
 export const urlRoute = express.Router();
 
-urlRoute.post('/urls', [authMiddleware, validateBody(urlSchema)], urls);
+urlRoute.post('/urls', [validateBody(urlSchema)], urls);
 urlRoute.delete('/urls/:urlId', [authMiddleware], deleteUrl);
 urlRoute.get('/urls',[authMiddleware], getUrls);
-urlRoute.get('/:urlId', urlId);

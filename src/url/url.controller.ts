@@ -13,17 +13,25 @@ export async function urlId(req: Request, res: Response){
 
 export async function urls(req: Request, res: Response){
     const { destination } = req.body;
-    const authRequest = req as AuthenticatedRequest;
-    const userId = authRequest.session.user.id;
+    const clientId = req.headers['clientid'] as string;
 
-    if(userId && destination.length > 0) {
-        const newUrl = await createUrl(destination, userId);
-        if(newUrl) {
-            res.send(newUrl);
-        }
-    } else {
-        res.status(401).send('something went wrong');
+    const authRequest = req as AuthenticatedRequest;
+    const userId = authRequest.session?.user?.id || null;
+
+    if (!destination || destination.length === 0) {
+        res.status(400).send('Invalid destination URL');
+        return;
     }
+    
+    const newUrl = await createUrl(destination, userId, clientId);
+    
+    if (newUrl) {
+        const url = `https://localhost:3000/${newUrl.id}`
+        res.send(url);
+        return;
+    }
+
+    res.status(500).send('Something went wrong');
 }
 
 export async function getUrls(req: Request, res: Response){
