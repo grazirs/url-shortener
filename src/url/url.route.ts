@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { deleteUrl, getUrls, urlId, urls } from "./url.controller";
+import { deleteUrl, getUrls, urls } from "./url.controller";
 import { validateBody } from "../middleware/validator.middleware";
 import { urlSchema } from "./url.dto";
 

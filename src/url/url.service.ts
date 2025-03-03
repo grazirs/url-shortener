@@ -1,7 +1,7 @@
 import { pool } from "../db";
 import { nanoid } from 'nanoid';
 
-export async function findUrl(urlId: string){
+export async function findUrlById(urlId: string){
     try {
         const res = await pool.query('SELECT * FROM urls WHERE id = $1', [urlId]);
         return res.rows[0];
@@ -11,11 +11,23 @@ export async function findUrl(urlId: string){
     }
 }
 
-export async function createUrl(destination: string, userId: number | null, clientId: string){
+export async function findUrlByAlias(alias: string){
+    try {
+        const res = await pool.query('SELECT * FROM urls WHERE alias = $1', [alias]);
+        return res.rows[0];
+    } catch (err) {
+        console.error('Something went wrong:', err);
+        throw err; 
+    }
+}
+
+
+export async function createUrl(destination: string, userId: number | null, clientId: string, alias: string){
     const LENGTH = 7;
-    const urlId = nanoid(LENGTH);
-    const text = 'INSERT INTO urls (id, destination, user_id, client_id) VALUES($1, $2, $3, $4) RETURNING *';
-    const values = [urlId, destination, userId, clientId];
+    const generatedAlias = nanoid(LENGTH);
+    const id = nanoid(LENGTH);
+    const text = 'INSERT INTO urls (id, destination, user_id, client_id, alias) VALUES($1, $2, $3, $4, $5) RETURNING *';
+    const values = [id, destination, userId, clientId, alias ?? generatedAlias];
 
     try {
         const res = await pool.query(text, values);

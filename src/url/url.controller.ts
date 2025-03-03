@@ -1,18 +1,20 @@
 import { Request, Response } from "express";
-import { createUrl, findUrl, findUrlsFromUser, removeUrl } from "./url.service";
+import { createUrl, findUrlById, findUrlByAlias, findUrlsFromUser, removeUrl } from "./url.service";
 import { AuthenticatedRequest } from "../types";
 
-export async function urlId(req: Request, res: Response){
-    const url = await findUrl(req.params.urlId);
+const baseUrl = process.env.BASE_URL;
+
+export async function alias(req: Request, res: Response){
+    const url = await findUrlByAlias(req.params.alias);
     if(url){
         res.redirect(url.destination);
     }  else {
-        res.status(404).send(`${req.params.urlId} does not exist`);
+        res.status(404).send(`${req.params.alias} does not exist`);
     }
 }
 
 export async function urls(req: Request, res: Response){
-    const { destination } = req.body;
+    const { destination, alias } = req.body;
     const clientId = req.headers['clientid'] as string;
 
     const authRequest = req as AuthenticatedRequest;
@@ -22,12 +24,16 @@ export async function urls(req: Request, res: Response){
         res.status(400).send('Invalid destination URL');
         return;
     }
-    
-    const newUrl = await createUrl(destination, userId, clientId);
-    
+    const existingAlias = await findUrlByAlias(alias);
+    if(existingAlias){
+        res.status(500).send('Alias already in use. Please choose a different one.');
+        return;
+    }
+    const newUrl = await createUrl(destination, userId, clientId, alias);
+
     if (newUrl) {
-        const url = `https://localhost:3000/${newUrl.id}`
-        res.send(url);
+        const result = `${baseUrl}/${newUrl.alias}`;
+        res.send(result);
         return;
     }
 
@@ -49,7 +55,7 @@ export async function deleteUrl(req: Request, res: Response) {
     const { urlId } = req.params;
     const authRequest = req as AuthenticatedRequest;
     const userId = authRequest.session.user.id;
-    const url = await findUrl(urlId);
+    const url = await findUrlById(urlId);
     if(!url) {
         res.status(404).send('Url not found');
         return;

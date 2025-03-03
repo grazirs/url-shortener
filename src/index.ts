@@ -6,7 +6,7 @@ import { urlRoute } from './url/url.route';
 import { authRoute } from './auth/auth.route';
 import { sessionConfig } from './middleware/session.middleware';
 import { userRoute } from './user/user.route';
-import { urlId } from './url/url.controller';
+import { alias } from './url/url.controller';
 
 
 export const app = express();
@@ -18,7 +18,7 @@ app.use(sessionConfig);
 app.use('/api', authRoute);
 app.use('/api', userRoute);
 app.use('/api', urlRoute);
-app.get('/:urlId', urlId);
+app.get('/:alias', alias);
 
 app.listen(PORT, () => {
     console.log('Server Ready');
