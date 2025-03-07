@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import { createUser, encryptPassword, findUserByEmail } from "./auth.service";
 import bcrypt from 'bcrypt';
-import { authSchema } from "./auth.dto";
-import { validateBody } from "../middleware/validator.middleware";
+import { associateUrlsToUser } from "../url/url.service";
 
 export async function signUp(req: Request, res: Response) {
     const { email, password } = req.body;
-    validateBody(authSchema);
+    const clientId = req.headers['clientid'] as string;
 
     const searchUser = await findUserByEmail(email);
 
@@ -18,13 +17,16 @@ export async function signUp(req: Request, res: Response) {
     const newUser = await createUser({email: email,  password: encryptedPassword});
     if (newUser) {
         const { password, ...rest } = newUser;
+        
+        if (clientId) {
+            await associateUrlsToUser(newUser.id, clientId);
+        }
         res.send(rest);
     }
 }
 
-export async function login(req: Request, res: Response) {
-    const { email, password } = req.body;
-    validateBody(authSchema);
+export async function signIn(req: Request, res: Response) {
+    const { email, password, clientId} = req.body;
 
     const user = await findUserByEmail(email);
 
@@ -36,6 +38,11 @@ export async function login(req: Request, res: Response) {
                 id: user.id,
                 email: user.email,
             };
+            
+            if (clientId) {
+                await associateUrlsToUser(user.id, clientId);
+            }
+            
             res.send('User authenticated successfully.');
         } else {
             res.status(401).send('Authentication failed.');
